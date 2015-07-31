@@ -16,7 +16,7 @@ To install pysmac, we advise using the Python package management system:
 
 .. code-block:: shell
 
-        pip install git+https://github.com/sfalkner/pysmac.git --user
+        pip install git+https://github.com/automl/pysmac.git --user
 
 If you prefer, you can clone the repository and install it manually via
 
