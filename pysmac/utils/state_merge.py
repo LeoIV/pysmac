@@ -257,7 +257,7 @@ def state_merge(state_run_directory_list, destination,
             fh.write('\n')
 
     
-    print(instances.values())
+    #print(instances.values())
     
     
     if header_feats is not None:
