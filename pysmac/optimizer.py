@@ -188,7 +188,7 @@ class SMAC_optimizer(object):
                 # and the same number of features
                 nf = len(train_instance_features[0])
                 for feature_vector in  train_instance_features:
-                    if (len(train_instance_features) != nf):
+                    if (len(feature_vector) != nf):
                         raise ValueError("You have to specify the same number of features for every instance!")
                 self.smac_options['feature_file'] = os.path.join(self.working_directory ,'instances.dat')
                 
@@ -231,8 +231,8 @@ class SMAC_optimizer(object):
                 fh.write("\n");
 
                 # and then the actual features
-                for i in len(train_instance_features):
-                    tmp = ['id_{}'.format(i)] + ["{}".format(f) for f in train_instace_features[i]]
+                for i in range(len(train_instance_features)):
+                    tmp = ['id_{}'.format(i)] + ["{}".format(f) for f in train_instance_features[i]]
                     fh.write(",".join(tmp))
                     fh.write("\n");
         
