@@ -215,7 +215,7 @@ class remote_smac(object):
         config_dict={}
 
                 
-        config_dict['instance']      = int(los[0][3:])
+        config_dict['instance']      = int(los[0].split(",")[0][3:])
         config_dict['instance_info'] = str(los[1])
         config_dict['cutoff_time']   = float(los[2])
         config_dict['cutoff_length'] = float(los[3])
