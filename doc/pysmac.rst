@@ -2,26 +2,26 @@ Detailed API documentation
 ==========================
 
 .. comment
-        pySMAC.analyzer module
+        pysmac.analyzer module
         ----------------------
 
-        .. automodule:: pySMAC.analyzer
+        .. automodule:: pysmac.analyzer
             :members:
             :undoc-members:
             :show-inheritance:
 
-pySMAC.optimizer module
+pysmac.optimizer module
 -----------------------
 
-.. automodule:: pySMAC.optimizer
+.. automodule:: pysmac.optimizer
     :members:
     :undoc-members:
     :show-inheritance:
 
-pySMAC.remote_smac module
+pysmac.remote_smac module
 -------------------------
 
-.. automodule:: pySMAC.remote_smac
+.. automodule:: pysmac.remote_smac
     :members:
     :undoc-members:
     :show-inheritance:

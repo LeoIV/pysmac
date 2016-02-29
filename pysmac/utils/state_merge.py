@@ -14,12 +14,12 @@ from .smac_output_readers import *
 def find_largest_file (glob_pattern):
     """ Function to find the largest file matching a glob pattern.
 
-    Old SMAC version keep several versions of files as 'back-ups'. This
+    Old SMAC version keep several versions of files as back-ups. This
     helper can be used to find the largest file (which should contain the
     final output). One could also go for the most recent file, but that
     might fail when the data is copied.
 
-    :param glob_pattern: a *NIX style pattern to apply
+    :param glob_pattern: a UNIX style pattern to apply
     :type glob_pattern: string
 
     :returns: string -- largest file matching the pattern 

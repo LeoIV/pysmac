@@ -215,7 +215,7 @@ call to the minimize method would look like this:
 
 .. code-block:: python
 
-    opt = pySMAC.SMAC_optimizer()
+    opt = pysmac.SMAC_optimizer()
     value, config = opt.minimize(function_to_minimize, num_function_calls,
 				 parameter_definition,
 				 forbidden_clasuses = forbidden_confs)
@@ -246,9 +246,6 @@ Some examples (without the appropriate parameter definitions) to illustrate this
                            "{sqrt(a) + log10(b) >= - exp(2)}"]
 
 
-
-
-
 .. note::
     The SMAC manual has an extensive section on important tips and caveats
     related to forbidden parameters. Here are some major points
@@ -272,3 +269,13 @@ Some examples (without the appropriate parameter definitions) to illustrate this
 	  For numerical values the definition of c implies "100<10", which is not true.
     
     For more details, please refer to the SMAC manual.
+
+
+.. _merge_pcs:
+
+Combining Parameter Configuration Spaces
+----------------------------------------
+
+
+.. literalinclude:: ../examples/merge_pcs.py
+    :linenos:
