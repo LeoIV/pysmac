@@ -86,7 +86,7 @@ def read_scenario_file(fn):
                         'run-obj' : 'run_obj',
                         'run-objective' : 'run_obj',
                         'runObj' : 'run_obj',
-                        'overall_obj' : 'run_obj',
+                        'overall_obj' : 'overall_obj',
                         'intra-obj' : 'overall_obj', 
                         'intra-instance-obj'  : 'overall_obj', 
                         'overall-obj'  : 'overall_obj', 
