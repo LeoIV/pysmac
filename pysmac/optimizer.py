@@ -190,7 +190,7 @@ class SMAC_optimizer(object):
                 for feature_vector in  train_instance_features:
                     if (len(feature_vector) != nf):
                         raise ValueError("You have to specify the same number of features for every instance!")
-                self.smac_options['feature_file'] = os.path.join(self.working_directory ,'instances.dat')
+                self.smac_options['feature_file'] = os.path.join(self.working_directory ,'features.dat')
                 
 
 
