@@ -304,4 +304,9 @@ class SMAC_optimizer(object):
 
         run_incumbents.sort(key = operator.itemgetter("Estimated Training Performance"))
 
-        return( run_incumbents[0]["Estimated Training Performance"], run_incumbents[0]['Configuration'])
+        param_dict = run_incumbents[0]['Configuration']
+
+        for k in param_dict:
+            param_dict[k] = parser_dict[k](param_dict[k])
+
+        return( run_incumbents[0]["Estimated Training Performance"], param_dict)

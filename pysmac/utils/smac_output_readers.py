@@ -5,6 +5,15 @@ import operator
 
 import numpy as np
 
+from pysmac.remote_smac import process_parameter_definitions
+
+
+def convert_param_dict_types(param_dict, pcs):
+    _, parser_dict = process_parameter_definitions(pcs)
+    for k in param_dict:
+        param_dict[k] = parser_dict[k](param_dict[k])
+    return(param_dict)
+
 
 
 def json_parse(fileobj, decoder=json.JSONDecoder(), buffersize=2048):

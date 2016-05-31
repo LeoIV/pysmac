@@ -83,8 +83,6 @@ def process_single_parameter_definition(name, specification):
     return string, dtype
 
 
-# takes the users parameter definition and converts into lines for the pcs file
-# and also creates a dictionary for parsing smacs output
 def process_parameter_definitions(parameter_dict):
     """
     A helper function to process all parameter definitions conviniently with just one call.
@@ -214,7 +212,7 @@ class remote_smac(object):
         los = config_str.replace('\'','').split() # name is shorthand for 'list of strings'
         config_dict={}
 
-                
+        print(los)
         config_dict['instance']      = int(los[0].split(",")[0][3:])
         config_dict['instance_info'] = str(los[1])
         config_dict['cutoff_time']   = float(los[2])
