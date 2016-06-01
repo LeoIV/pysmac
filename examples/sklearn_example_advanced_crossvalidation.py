@@ -1,12 +1,7 @@
 from __future__ import print_function, division
 
-import sys
-sys.path.append("..")
-sys.path.append("../../pynisher/")
-
 
 import pysmac
-
 import numpy
 import sklearn.ensemble
 import sklearn.datasets
@@ -17,10 +12,14 @@ import sklearn.cross_validation
 X,Y = sklearn.datasets.make_classification(1000, n_features=20, n_informative=10, n_classes=10, random_state=2)		# seed yields a mediocre initial accuracy on my machine
 
 # But this time, we do not split it into train and test data set, but we will use
-# k-fold cross validation insteat to estimate the accuracy better. Henre we shall
+# k-fold cross validation instead to estimate the accuracy better. Here,we shall
 # use k=10 for demonstration purposes. To make thins more convinient later on,
 # let's convert the KFold iterator into a list, so we can use indexing.
 kfold = [(train,test) for (train,test) in sklearn.cross_validation.KFold(X.shape[0], 10)]
+
+# To demonstrate the use of features, let's use the class frequencies of a fold
+# as features. It will turn out that those are not informative features, as they are almost
+# all the identical, but good dataset features are beyond the scope of this example.
 features = numpy.array([numpy.bincount(Y[test], minlength=10) for (test,train) in kfold])
 
 # We have to make a slight modification to the function fitting the random forest.
@@ -41,12 +40,15 @@ def random_forest(n_estimators,criterion, max_features, max_depth, bootstrap, in
 	
 	return -predictor.score(X_test, Y_test)
 
+
+# Convenience function to model compute the true mean accuracy across all
+# 10 folds.
 def true_accuracy(**config):
 	accuracy = 0.
 
+	predictor = sklearn.ensemble.RandomForestClassifier(**config)
 	for train, test in kfold:
 		X_train, Y_train, X_test, Y_test = X[train], Y[train], X[test], Y[test]
-		predictor = sklearn.ensemble.RandomForestClassifier()
 		predictor.fit(X_train, Y_train)
 		accuracy += predictor.score(X_test, Y_test)
 	return(accuracy/len(kfold))
@@ -69,6 +71,7 @@ opt = pysmac.SMAC_optimizer( working_directory = '/tmp/pysmac_test/',# the folde
 							 debug = False							 # if something goes wrong, enable this for diagnostic output
 							)
 
+
 # The minimize method also has optional arguments
 value, parameters = opt.minimize(random_forest,
 					200, parameter_definition,
@@ -76,7 +79,7 @@ value, parameters = opt.minimize(random_forest,
 					seed = 0,						# the random seed used. can be an int or a list of ints of length num_runs
 					num_procs = 2,					# pysmac can harness multicore architecture. Specify the number of processes to use here.
 					num_train_instances = len(kfold),# This tells SMAC how many different instances there are.
-					train_instance_features = features
+					train_instance_features = features# use the features defined above to better predict the overall performance
 					)
 	
 print('Parameter setting %s'%parameters)

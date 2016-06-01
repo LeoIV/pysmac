@@ -212,8 +212,7 @@ class remote_smac(object):
         los = config_str.replace('\'','').split() # name is shorthand for 'list of strings'
         config_dict={}
 
-        print(los)
-        config_dict['instance']      = int(los[0].split(",")[0][3:])
+        config_dict['instance']      = int(los[0][3:])
         config_dict['instance_info'] = str(los[1])
         config_dict['cutoff_time']   = float(los[2])
         config_dict['cutoff_length'] = float(los[3])
