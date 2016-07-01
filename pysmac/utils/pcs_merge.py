@@ -44,7 +44,7 @@ def merge_configuration_spaces(*args, **kwargs):
 			for p in params:
 				c = (re.subn( p, name + '_' + p , c)[0])
 			
-			conditionals.append( c + ' && algorithm == '+name)
+			conditionals.append( c.rstrip() + ' && algorithm == '+name)
 	
 		# add new conditionals
 		for p in params:
