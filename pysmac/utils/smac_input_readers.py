@@ -66,6 +66,37 @@ def read_pcs(filename):
             
     return param_dict, conditions, forbiddens
 
+def write_pcs(pcs_filename, parameters, forbiddens, conditionals)
+    ''' Function to write a SMAC PCS file'''
+    with open(pcs_filename, 'w') as out:
+        # Parameters
+        out.write("# Parameters\n")
+        for param, info in parameters.iteritems():
+            if param == 'algorithm': # Handle this specially because merge_configuration_spaces doesn't return a set
+                values = set(info[1])
+                default = info[2]
+            else:
+                values = info[0]
+                default = info[1]
+            if isinstance(values, set): # Categorical
+                line = "%(param)s {%(values)s} [%(default)s]" % dict(param=param, values=",".join(values), default=default)
+            else:
+                _type = '' if len(info) == 2 else info[2][0]
+                if _type == 'i':
+                    values = map(int, info[0])
+                    default = int(info[1])
+                line = "%(param)s %(values)s [%(default)s] %(_type)s" % dict(param=param, values=values, default=default, _type=_type)
+            out.write(line +'\n')
+        
+        # Conditionals
+        out.write("# Conditionals\n")
+        for conditional in conditionals:
+            out.write(conditional +'\n')
+        
+        out.write("# Forbidden\n")
+        # Forbidden
+        for forbidden in forbiddens:
+            out.write(forbidden +'\n')
 
 def read_scenario_file(fn):
     """ Small helper function to read a SMAC scenario file.
