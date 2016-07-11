@@ -36,8 +36,8 @@ class SMAC_analyzer(object):
             else:
                 self.scenario_fn=os.path.join(obj, 'scenario.dat')
         
-        self.validation = True
-        self.overall_objective = "MEAN10"
+        self.validation = False
+        self.overall_objective = "MEAN"
         
         # parse scenario file for important information
         with open(self.scenario_fn,'r') as fh:
