@@ -35,15 +35,15 @@ def process_single_parameter_definition(name, specification):
     """
     A helper function to process a single parameter definition for further communication with SMAC.
     """
-    
+
     data_type_mapping = {'integer': int, 'real': float}
-    
+
     assert isinstance(specification, tuple), "The specification \"{}\" for {} is not valid".format(specification,name)
     assert len(specification)>1, "The specification \"{}\" for {} is too short".format(specification,name)
-    
+
     if specification[0] not in {'real', 'integer', 'ordinal', 'categorical'}:
         raise ValueError("Type {} for {} not understood".format(specification[0], name))
-    
+
     string = '{} {}'.format(name, specification[0])
 
     # numerical values
@@ -55,28 +55,28 @@ def process_single_parameter_definition(name, specification):
             raise ValueError("Interval {} not not understood.".format(specification[1]))
         if not (specification[1][0] <= specification[2] and specification[2] <= specification[1][1]):
             raise ValueError("Default value for {} has to be in the specified range".format(name))
-            
+
         if specification[0] == 'integer':
             if (type(specification[1][0]) != int) or (type(specification[1][1]) != int) or (type(specification[2]) != int):
                 raise ValueError("Bounds and default value of integer parameter {} have to be integer types!".format(name))
-        
+
         string += " [{0[0]}, {0[1]}] [{1}]".format(specification[1], specification[2])
-    
+
         if ((len(specification) == 4) and specification[3] == 'log'):
             if specification[1][0] <= 0:
                 raise ValueError("Range for {} cannot contain non-positive numbers.".format(name))
             string += " log"
-    
+
     # ordinal and categorical types
     if (specification[0] in {'ordinal', 'categorical'}):
-        
+
         if specification[2] not in specification[1]:
             raise ValueError("Default value {} for {} is not valid.".format(specification[2], name))
-        
+
         # make sure all elements are of the same type
         if (len(set(map(type, specification[1]))) > 1):
             raise ValueError("Not all values of {} are of the same type!".format(name))
-        
+
         dtype = type(specification[1][0])
         string += " {"+",".join(map(str, specification[1])) + '}' + ('[{}]'.format(specification[2]))
 
@@ -86,22 +86,22 @@ def process_single_parameter_definition(name, specification):
 def process_parameter_definitions(parameter_dict):
     """
     A helper function to process all parameter definitions conviniently with just one call.
-    
-    This function takes the parametr definitions from the user, converts 
+
+    This function takes the parametr definitions from the user, converts
     them into lines for SMAC's PCS format, and also creates a dictionary
     later used in the comunication with the SMAC process.
-    
+
     :param paramer_dict: The user defined parameter configuration space
-    
+
     """
     pcs_strings = []
     parser_dict={}
-    
+
     for k,v in list(parameter_dict.items()):
         line, dtype = process_single_parameter_definition(k,v)
         parser_dict[k] = dtype
         pcs_strings.append(line)
-        
+
     return (pcs_strings, parser_dict)
 
 
@@ -110,12 +110,12 @@ class remote_smac(object):
     """
     The class responsible for the TCP/IP communication with a SMAC instance.
     """
-    
+
     udp_timeout=1
     """
     The default value for a timeout for the socket
     """
-    
+
     def __init__(self, scenario_fn, additional_options_fn, seed, class_path, memory_limit, parser_dict, java_executable):
         """
         Starts SMAC in IPC mode. SMAC will wait for udp messages to be sent.
@@ -123,14 +123,14 @@ class remote_smac(object):
         self.__parser = parser_dict
         self.__subprocess = None
         self.__logger = multiprocessing.get_logger()
-        
+
         # establish a socket
         self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__sock.settimeout(3)
         self.__sock.bind(('', 0))
         self.__sock.listen(1)
-        
+
         self.__port = self.__sock.getsockname()[1]
         self.__logger.debug('picked port %i'%self.__port)
 
@@ -148,16 +148,16 @@ class remote_smac(object):
                 "--ipc-remote-port", str(self.__port),
                 "--seed", str(seed)
                 ]
-        
+
         with open(additional_options_fn, 'r') as fh:
             for line in fh:
                 name, value = line.strip().split(' ')
                 cmds += ['--%s'%name, '%s'%value]
-        
+
         self.__logger.debug("SMAC command: %s"%(' '.join(cmds)))
-        
+
         self.__logger.debug("Starting SMAC in ICP mode")
-        
+
         # connect the output to the logger if the appropriate level has been set
         if self.__logger.level < logging.WARNING:
             self.__subprocess = subprocess.Popen(cmds, stdout =sys.stdout, stderr = sys.stderr)
@@ -173,26 +173,26 @@ class remote_smac(object):
             if self.__subprocess.returncode == None:
                 self.__subprocess.kill()
                 self.__logger.debug('SMAC had to be terminated')
-            else:    
+            else:
                 self.__logger.debug('SMAC terminated with returncode %i', self.__subprocess.returncode)
 
 
     def next_configuration(self):
         """ Method that queries the next configuration from SMAC.
-        
+
         Connects to the socket, reads the message from SMAC, and
         converts into a proper Python representation (using the proper
         types). It also checks whether the SMAC subprocess is still alive.
-        
-        :returns: either a dictionary with a configuration, or None if SMAC has terminated 
+
+        :returns: either a dictionary with a configuration, or None if SMAC has terminated
         """
         while True:
             try:
                 self.__logger.debug('trying to retrieve the next configuration from SMAC')
-                self.__sock.setblocking(True)
                 self.__sock.settimeout(self.udp_timeout)
+                self.__sock.setblocking(True)
                 self.__conn, addr = self.__sock.accept()
-                fconn = self.__conn.makefile('r') 
+                fconn = self.__conn.makefile('r')
                 config_str = fconn.readline()
                 break
             #except InterruptedError:
@@ -201,7 +201,7 @@ class remote_smac(object):
                 # if smac already terminated, there is nothing else to do
                 if self.__subprocess.poll() is not None:
                     self.__logger.debug("SMAC subprocess is no longer alive!")
-                    return None    
+                    return None
                 #otherwise there is funny business going on!
                 else:
                     self.__logger.debug("SMAC has not responded yet, but is still alive. Will keep waiting!")
@@ -209,7 +209,7 @@ class remote_smac(object):
                 raise
 
         self.__logger.debug("SMAC message: %s"%config_str)
-        
+
         los = config_str.replace('\'','').split() # name is shorthand for 'list of strings'
         config_dict={}
 
@@ -219,18 +219,18 @@ class remote_smac(object):
         config_dict['cutoff_length'] = float(los[3])
         config_dict['seed']          = int(los[4])
 
-        
+
         for i in range(5, len(los), 2):
             config_dict[ los[i][1:] ] = self.__parser[ los[i][1:] ]( los[i+1])
-        
+
         self.__logger.debug("Our interpretation: %s"%config_dict)
         return (config_dict)
-    
+
     def report_result(self, result_dict):
         """Method to report the latest run results back to SMAC.
-        
+
         This method communicates the results from the last run back to SMAC.
-        
+
         :param result_dict: dictionary with the keys 'value', 'status', and 'runtime'.
         :type result_dic: dict
         """
@@ -249,28 +249,28 @@ def remote_smac_function(only_arg):
     """
     The function that every worker from the multiprocessing pool calls
     to perform a separate SMAC run.
-    
+
     This function is not part of the API that users should access, but
     rather part of the internals of pysmac. Due to the limitations of the
-    multiprocessing module, it can only take one argument which is a 
+    multiprocessing module, it can only take one argument which is a
     list containing important arguments in a very specific order. Check
     the source code if you want to learn more.
-    
+
     """
     try:
         scenario_file, additional_options_fn, seed, function, parser_dict,\
           memory_limit_smac_mb, class_path, num_instances, mem_limit_function,\
           t_limit_function, deterministic, java_executable, timeout_quality = only_arg
-    
+
         logger = multiprocessing.get_logger()
-    
-        smac = remote_smac(scenario_file, additional_options_fn, seed, 
+
+        smac = remote_smac(scenario_file, additional_options_fn, seed,
                                class_path, memory_limit_smac_mb,parser_dict, java_executable)
-    
+
         logger.debug('Started SMAC subprocess')
-    
+
         num_iterations = 0
-    
+
         while True:
             config_dict = smac.next_configuration()
 
@@ -278,16 +278,16 @@ def remote_smac_function(only_arg):
             # if it is None, it means that SMAC has finished (for whatever reason)
             if config_dict is None:
                 break
-            
+
             # delete the unused variables from the dict
             if num_instances is None:
                 del config_dict['instance']
-            
+
             del config_dict['instance_info']
             del config_dict['cutoff_length']
             if deterministic:
                 del config_dict['seed']
-        
+
             current_t_limit = int(ceil(config_dict.pop('cutoff_time')))
             # only restrict the runtime if an initial cutoff was defined
             current_t_limit = None if t_limit_function is None else current_t_limit
@@ -324,7 +324,7 @@ def remote_smac_function(only_arg):
             if num_try == 9:
                 logger.warning('Configuration {} crashed 8 times, giving up on it.'.format(config_dict))
                 res = None
-            
+
             if res is not None:
                 try:
                     logger.debug('iteration %i:function value %s, computed in %s seconds'%(num_iterations, str(res), str(res['runtime'])))
