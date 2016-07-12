@@ -190,21 +190,25 @@ class remote_smac(object):
             try:
                 self.__logger.debug('trying to retrieve the next configuration from SMAC')
                 self.__sock.settimeout(self.udp_timeout)
-                self.__sock.setblocking(True)
                 self.__conn, addr = self.__sock.accept()
                 fconn = self.__conn.makefile('r')
                 config_str = fconn.readline()
                 break
-            #except InterruptedError:
-            #    continue
             except socket.timeout:
                 # if smac already terminated, there is nothing else to do
                 if self.__subprocess.poll() is not None:
                     self.__logger.debug("SMAC subprocess is no longer alive!")
                     return None
-                #otherwise there is funny business going on!
+                #otherwise there is funny buisiness going on!
                 else:
                     self.__logger.debug("SMAC has not responded yet, but is still alive. Will keep waiting!")
+                    continue
+            except socket.error as e:
+            #    continue
+                    if e.args[0] == errno.EAGAIN: 
+                        self.__logger.debug("Socket to SMAC process was empty, will continue to wait.")
+                        time.sleep(1)
+                        continue
             except:
                 raise
 
