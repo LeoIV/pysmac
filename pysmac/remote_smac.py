@@ -8,6 +8,7 @@ import subprocess
 import resource
 from pkg_resources import resource_filename
 from math import ceil
+import errno
 
 import logging
 import multiprocessing
@@ -205,7 +206,7 @@ class remote_smac(object):
                     continue
             except socket.error as e:
             #    continue
-                    if e.args[0] == errno.EAGAIN: 
+                    if e.args[0] == errno.EAGAIN:
                         self.__logger.debug("Socket to SMAC process was empty, will continue to wait.")
                         time.sleep(1)
                         continue
