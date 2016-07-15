@@ -1,5 +1,7 @@
 from __future__ import print_function, division
 
+import sys
+sys.path.append("..")
 
 import pysmac
 import math
@@ -44,7 +46,7 @@ parameter_definition=dict(\
 
 
 # The next step is to create a SMAC_optimizer object
-opt = pysmac.SMAC_optimizer()
+opt = pysmac.SMAC_optimizer(debug=True)
 
 # Then, call its minimize method with at least the three mandatory parameters
 value, parameters = opt.minimize(modified_branin,      # the function to be minimized
