@@ -9,10 +9,10 @@ import math
 # To demonstrate the use, we shall look at a slight modification of the well-
 # known branin funtcion. To make things a little bit more interesting, we add
 # a third parameter (x3). It has to be an integer, which is usually not
-# covered by standard global minimizers. 
+# covered by standard global minimizers.
 # SMAC will acutally not impress for this function as SMAC's focus is more on
 # high dimensional problems with also categorical parameters, and possible
-# dependencies between them. This is where the underlying random forest realy 
+# dependencies between them. This is where the underlying random forest realy
 # shines.
 def modified_branin(x1, x2, x3):
     # enforce that x3 has an integer value
@@ -32,7 +32,7 @@ def modified_branin(x1, x2, x3):
 # Now we have to define the parameters for the function we like to minimize.
 # The representation tries to stay close to the SMAC manual, but deviates
 # if necessary. # Because we use a Python dictionary to represent the
-# parameters, there are different ways of creating it. The author finds the 
+# parameters, there are different ways of creating it. The author finds the
 # following way most intuitive:
 parameter_definition=dict(\
                 x1=('real',    [-5, 5],  1),     # this line means x1 is a float between -5 and 5, with a default of 1
@@ -46,7 +46,7 @@ parameter_definition=dict(\
 
 
 # The next step is to create a SMAC_optimizer object
-opt = pysmac.SMAC_optimizer(debug=True)
+opt = pysmac.SMAC_optimizer(debug=False)
 
 # Then, call its minimize method with at least the three mandatory parameters
 value, parameters = opt.minimize(modified_branin,      # the function to be minimized
