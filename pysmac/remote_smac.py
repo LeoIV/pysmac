@@ -188,9 +188,9 @@ class remote_smac(object):
         :returns: either a dictionary with a configuration, or None if SMAC has terminated
         """
         
-		self.__logger.debug('trying to retrieve the next configuration from SMAC')
-		self.__sock.settimeout(self.udp_timeout)
-		self.__conn, addr = self.__sock.accept()
+        self.__logger.debug('trying to retrieve the next configuration from SMAC')
+        self.__sock.settimeout(self.udp_timeout)
+        self.__conn, addr = self.__sock.accept()
         while True:
             try:
 
@@ -208,12 +208,12 @@ class remote_smac(object):
                     continue
             except socket.error as e:
             #    continue
-				if e.args[0] == errno.EAGAIN:
-					self.__logger.debug("Socket to SMAC process was empty, will continue to wait.")
-					time.sleep(1)
-					continue
-				else:
-					raise
+                if e.args[0] == errno.EAGAIN:
+                    self.__logger.debug("Socket to SMAC process was empty, will continue to wait.")
+                    time.sleep(1)
+                    continue
+                else:
+                    raise
             except:
                 raise
 
