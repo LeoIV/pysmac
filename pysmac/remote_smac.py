@@ -190,10 +190,10 @@ class remote_smac(object):
         
         self.__logger.debug('trying to retrieve the next configuration from SMAC')
         self.__sock.settimeout(self.udp_timeout)
-        self.__conn, addr = self.__sock.accept()
+
         while True:
             try:
-
+                self.__conn, addr = self.__sock.accept()
                 fconn = self.__conn.makefile('r')
                 config_str = fconn.readline()
                 break
