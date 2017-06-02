@@ -85,3 +85,12 @@ faster convergence towards a local optimum. But the purpose of this quickstart g
 is solely to introduce how to use pySMAC rather than showing an interesting example.
 The strength of pySMAC become more visible in more complicated cases that are usually
 infeasible for standard optimizers.
+
+fANOVA
+------
+In addition fANOVA can be run on pySMAC's output as shown in the following script from the example folder:
+To gain familiarity with the workflow, we shall dissect the file "rosenbrock_example.py"
+which can be found in the example folder. The full script looks like this:
+
+.. literalinclude:: ../examples/branin_fanova_example.py
+        :linenos:
