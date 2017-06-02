@@ -95,5 +95,3 @@ def smac_to_fanova(state_run_directory, destination_dir):
         X[:, idx] = x[:, i]   
     # create an instance of fanova with data for the random forest and the configSpace
     return fanova.fANOVA(X = X, Y = Y, config_space= cs)
-    
-    
