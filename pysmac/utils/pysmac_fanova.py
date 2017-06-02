@@ -26,6 +26,16 @@ def data_extractor(responsefile, length):
     return Y
     
 def smac_to_fanova(state_run_directory, destination_dir):
+    '''
+    Takes the state-run files, merges them and prepares the configuration space for fANOVA.
+    
+    outputs: fANOVA object
+    
+    state_run_directory: str
+                        path to the directory of the pysmac_output/out/scenario file
+    destination_dir: str
+                    path to the directory in which the merged states should be stored
+    '''
     state_run_list =[]
     files = glob(state_run_directory + "/*")
     for file in files:
