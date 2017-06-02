@@ -34,6 +34,14 @@ pysmac.utils.smac_output_readers module
     :undoc-members:
     :show-inheritance:
 
+pysmac.utils.pysmac_fanova module
+---------------------------------------
+
+.. automodule:: pysmac.utils.pysmac_fanova
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pysmac.utils.state_merge module
 -------------------------------
 
