@@ -89,8 +89,8 @@ infeasible for standard optimizers.
 fANOVA
 ------
 In addition fANOVA can be run on pySMAC's output as shown in the following script from the example folder:
-To gain familiarity with the workflow, we shall dissect the file "rosenbrock_example.py"
-which can be found in the example folder. The full script looks like this:
 
 .. literalinclude:: ../examples/branin_fanova_example.py
         :linenos:
+
+
