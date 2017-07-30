@@ -9,6 +9,8 @@ import operator
 import multiprocessing
 import logging
 import csv
+import pickle
+
 
 from .utils.smac_output_readers import read_trajectory_file
 import pysmac.remote_smac
@@ -34,8 +36,8 @@ class SMAC_optimizer(object):
     """
 
 
-	pysmac_config = {}
-	""" A dict associated with pySMAC internals that can be used later in, e.g. PIAC """
+    pysmac_config = {}
+    """ A dict associated with pySMAC internals that can be used later in, e.g. PIAC """
 
 
     # collects smac specific data that go into the scenario file
@@ -174,8 +176,8 @@ class SMAC_optimizer(object):
         :type  mem_limit_function_mb: int
         :param t_limit_function_s: cutoff time for a single function call. ``None`` means no restriction. If optimizing run time, SMAC can choose a shorter cutoff than the provided one for individual runs. If `None` was provided, then there is no cutoff ever!
         """
-		self.pysmac_config['deterministic'] = deterministic
-		self.pysmac_config['has_instance'] = (not num_train_instance is None)
+        self.pysmac_config['deterministic'] = deterministic
+        self.pysmac_config['has_instance'] = (not num_train_instances is None)
 
         self.smac_options['algo-deterministic'] = deterministic
         
@@ -202,8 +204,8 @@ class SMAC_optimizer(object):
         num_procs = int(num_procs)
         pcs_string, parser_dict = pysmac.remote_smac.process_parameter_definitions(parameter_dict)
 
-		self.pysmac_config['parser_dict'] = parser_dict
-		self.pysmac_config['function'] = func
+        self.pysmac_config['parser_dict'] = parser_dict
+        self.pysmac_config['function'] = func
 
         # adjust the seed variable
         if isinstance(seed, int):
@@ -291,8 +293,8 @@ class SMAC_optimizer(object):
         # check that all files are actually present, so SMAC has everything to start
         assert all(map(os.path.exists, [additional_options_fn, scenario_fn, self.smac_options['pcs-file'], self.smac_options['instances']])), "Something went wrong creating files for SMAC! Try to specify a \'working_directory\' and set \'persistent_files=True\'."
 
-		with open(os.path.join(self.working_directory, 'pysmac_config.pkl'), 'w') as fh:
-			pickle.dump(self.pysmac_config, fh)
+        with open(os.path.join(self.working_directory, 'pysmac_config.pkl'), 'wb') as fh:
+            pickle.dump(self.pysmac_config, fh)
 
         # create a pool of workers and make'em work
         pool = MyPool(num_procs)

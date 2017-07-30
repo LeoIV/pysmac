@@ -7,45 +7,72 @@ Created on Mon Jul 24 14:05:22 2017
 import subprocess
 import pickle
 import os
-path = os.path.dirname(os.path.realpath(__file__))
-import scripts.piac_validate as piac_val
+import glob
+import numpy as np
+from pysmac.utils import state_merge 
 
-def run_piac(destination_dir, working_dir, piac_path, per_partition_time, max_num_partitions, init_time_budget):
-    inputfile = open(destination_dir + '/scenario.txt', "r")
-    outputfile = open(destination_dir + '/piac_scenario.txt', "w")
-    for line in inputfile:
-        if not line.lstrip().startswith("output-dir") and not line.lstrip().startswith("algo-exec") and not line.lstrip().startswith("algo-exec-dir") :
-            outputfile.write(line.lower())
-    outputfile.write('algo-exec-dir %s \n' %(path + '/target_algorithms'))
-    outputfile.write('algo-exec python3 -u %s' %(path + '/target_algorithms/branin.py'))
-    inputfile.close()
-    outputfile.close()
-    
-    scenario_file = destination_dir + '/piac_scenario.txt'
-    
-    cmd = ["python3 %s/piac.py -v DEBUG --configurator SMAC2 %s %s --per_partition_time %i --max_num_partitions %i --init_time_budget %i" % (piac_path, scenario_file, working_dir,  per_partition_time, max_num_partitions, init_time_budget)]
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
-    output = process.communicate()[0]
-    print("Output: %s"% output)
-    process.wait()
-    print('Done')
+from piac.piac_main import piac_main
 
-def piac_evaluate(working_dir, inst_feature_file, instance_name):
+def run_piac(source_dir, function_file, working_dir, python_executable='python3',
+              verbosity='ERROR', seed=None,
+              exploration_time_budget=np.float('inf'),
+              per_partition_time=60,
+              init_rand_exploration_evaluations=20,
+              init_default_evaluations=5,
+              exploration_evaluations=20,
+              insts_for_PEI=-1,
+              max_num_partitions=4,
+              tae_str='old', #  options 'aclib', 'old'
+              save_rounds=False,
+              min_partition_size=4,
+              regularize=False,
+              modus='SMAC', # other choice 'ROAR'
+              only_use_known_configs=False,
+              budget='equal' # other choice 'inc' for increasing
+              ):
+    state_run_directory = os.path.join(source_dir, 'out/scenario')
+    merge_dir = os.path.join(working_dir, "scenario")
+    state_run_list = glob.glob(state_run_directory + "/state-run*")
+    state_merge.state_merge(state_run_list, merge_dir)
+    
+   
+    # copy necessary files
+    with open(merge_dir + '/scenario.txt', "r") as inputfile:
+        with open(working_dir + '/piac_scenario.txt', "w") as outputfile:
+            for line in inputfile:
+                header, rest = line.split(" ", 1)
+                if not header in ['output-dir', 'algo-exec', 'algo-exec-dir', 'run-obj']:
+                    outputfile.write(line)
+                if header == 'run-obj':
+                    outputfile.write(" ".join([header, rest.lower()]))
+            outputfile.write('algo-exec-dir %s \n' %(working_dir))
+            outputfile.write('algo-exec %s %s' %(python_executable, function_file))
+    
+    scenario_file = working_dir + '/piac_scenario.txt'
+    
+    
+    if seed is None:
+        seed = np.random.seed()
+    
+    piac_main(scen_file=scenario_file, per_partition_time=per_partition_time,
+              working_dir=working_dir, verbosity=verbosity, seed=seed,
+              exploration_time_budget=exploration_time_budget,
+              init_rand_exploration_evaluations=init_rand_exploration_evaluations,
+              init_default_evaluations=init_default_evaluations,
+              exploration_evaluations=exploration_evaluations, insts_for_PEI=insts_for_PEI,
+              max_num_partitions=max_num_partitions, tae_str=tae_str, save_rounds=save_rounds,
+              min_partition_size=min_partition_size, regularize=regularize, modus=modus,
+              only_known_configs=only_use_known_configs, budget=budget,
+              scenario_separator=' ')
+    
+
+def piac_evaluate(working_dir, instance_features):
     '''
     working_dir : where the piac_partition_tree_final.pkl file is stored
-    inst_feature_name: path to features.dat
+    inst_features: valid feature vector
     '''
     with open(working_dir + '/piac_partition_tree_final.pkl', 'rb') as f:
         tree_root = pickle.load(f)
     
-    inst_f_dict = {}
-    with open(inst_feature_file) as f:
-        next(f)
-        for line in f:
-            line = line.strip()
-            vals = line.split(',')
-            key = vals[0]
-            features = vals[1:]
-            inst_f_dict[key] = features
-    configuration, node_name = piac_val.trickle_down_tree(tree_root, inst_f_dict, instance_name)
-    return configuration, node_name
+    configuration = tree_root.configuration_for_instance(instance_features)
+    return configuration
