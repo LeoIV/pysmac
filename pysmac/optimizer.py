@@ -217,9 +217,15 @@ class SMAC_optimizer(object):
             raise ValueError("The seed variable could not be properly processed!")
         
         
+        if self.__t_limit_total_s > 0:
+            self.smac_options['wallclock_limit'] = self.__t_limit_total_s
+        
         self.smac_options['runcount-limit'] = max_evaluations
         if t_limit_function_s is not None:
             self.smac_options['cutoff_time'] = t_limit_function_s
+            if self.__t_limit_total_s == 0:
+                self.smac_options['wallclock_limit'] = max_evaluations * t_limit_function_s * 2
+        
         
         
         # create and fill the pcs file

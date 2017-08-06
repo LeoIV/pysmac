@@ -13,7 +13,7 @@ from pysmac.utils import state_merge
 
 from piac.piac_main import piac_main
 
-def run_piac(source_dir, function_file, working_dir, python_executable='python3',
+def run_ISMAC(source_dir, function_file, working_dir, python_executable='python3',
               verbosity='ERROR', seed=None,
               exploration_time_budget=np.float('inf'),
               per_partition_time=60,
@@ -22,9 +22,9 @@ def run_piac(source_dir, function_file, working_dir, python_executable='python3'
               exploration_evaluations=20,
               insts_for_PEI=-1,
               max_num_partitions=4,
+              min_partition_size=4,
               tae_str='old', #  options 'aclib', 'old'
               save_rounds=False,
-              min_partition_size=4,
               regularize=False,
               modus='SMAC', # other choice 'ROAR'
               only_use_known_configs=False,
@@ -54,7 +54,7 @@ def run_piac(source_dir, function_file, working_dir, python_executable='python3'
     if seed is None:
         seed = np.random.seed()
     
-    piac_main(scen_file=scenario_file, per_partition_time=per_partition_time,
+    model = piac_main(scen_file=scenario_file, per_partition_time=per_partition_time,
               working_dir=working_dir, verbosity=verbosity, seed=seed,
               exploration_time_budget=exploration_time_budget,
               init_rand_exploration_evaluations=init_rand_exploration_evaluations,
@@ -64,6 +64,7 @@ def run_piac(source_dir, function_file, working_dir, python_executable='python3'
               min_partition_size=min_partition_size, regularize=regularize, modus=modus,
               only_known_configs=only_use_known_configs, budget=budget,
               scenario_separator=' ')
+    return(model)
     
 
 def piac_evaluate(working_dir, instance_features):

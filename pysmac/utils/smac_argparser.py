@@ -64,7 +64,7 @@ def evaluate_function(function, config_dict, deterministic=False, has_instances=
     # for simple function, we just use 'SAT'
     result_dict = {
                 'value' : (2**31)-1,
-                'status': b'CRASHED' if res is None else b'SAT',
+                'status': 'CRASHED' if res is None else 'SAT',
                 'runtime': cpu_time
                 }
 
@@ -78,7 +78,7 @@ def evaluate_function(function, config_dict, deterministic=False, has_instances=
     if not current_t_limit is None:
         if ( (result_dict['runtime'] > current_t_limit-2e-2) or
                 (wall_time >= 10*current_t_limit) ):
-            result_dict['status']=b'TIMEOUT'
+            result_dict['status']='TIMEOUT'
     
     return(result_dict)
 

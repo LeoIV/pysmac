@@ -3,7 +3,7 @@ import math
 from pysmac.utils.smac_argparser import wrapper
 
 def branin(x1, x2, instance):
-	
+	# note, this function doesn't actually use the instance id for anything!
     a = 1
     b = 5.1 / (4*math.pi**2)
     c = 5 / math.pi
