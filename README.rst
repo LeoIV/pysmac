@@ -1,6 +1,8 @@
 pysmac
 ======
 
+**Deprecated -- we recommend to use [SMAC3](https://github.com/automl/SMAC3) for a Python implementation of SMAC.**
+
 Simple python wrapper to [SMAC](http://www.cs.ubc.ca/labs/beta/Projects/SMAC/), a versatile tool for optimizing algorithm parameters.
 
 SMAC is free for academic & non-commercial usage. Please contact Frank Hutter to discuss obtaining a license for commercial purposes.
