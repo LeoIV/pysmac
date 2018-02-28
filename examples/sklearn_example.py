@@ -19,7 +19,7 @@ X_train, X_test, Y_train, Y_test = sklearn.cross_validation.train_test_split(X,Y
 # the negative accuracy in order to maximize it.
 def random_forest(n_estimators,criterion, max_features, max_depth):
 	
-	predictor = sklearn.ensemble.RandomForestClassifier(n_estimators, criterion, max_features, max_depth)
+	predictor = sklearn.ensemble.RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_features=max_features, max_depth=max_depth)
 	predictor.fit(X_train, Y_train)
 	
 	return -predictor.score(X_test, Y_test)

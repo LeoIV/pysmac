@@ -112,7 +112,7 @@ class remote_smac(object):
     The class responsible for the TCP/IP communication with a SMAC instance.
     """
 
-    udp_timeout=5
+    udp_timeout=3
     """
     The default value for a timeout for the socket
     """
@@ -190,10 +190,10 @@ class remote_smac(object):
         
         self.__logger.debug('trying to retrieve the next configuration from SMAC')
         self.__sock.settimeout(self.udp_timeout)
-        self.__conn, addr = self.__sock.accept()
+
         while True:
             try:
-
+                self.__conn, addr = self.__sock.accept()
                 fconn = self.__conn.makefile('r')
                 config_str = fconn.readline()
                 break

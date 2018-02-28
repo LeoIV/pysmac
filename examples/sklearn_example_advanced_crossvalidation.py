@@ -37,12 +37,12 @@ def random_forest(n_estimators,criterion, max_features, max_depth, bootstrap, in
 	
 	predictor = sklearn.ensemble.RandomForestClassifier(n_estimators = n_estimators, criterion=criterion, max_features = max_features, max_depth = max_depth, bootstrap=bootstrap)
 	predictor.fit(X_train, Y_train)
+	print(predictor.score(X_test, Y_test))
 	
 	return -predictor.score(X_test, Y_test)
 
 
-# Convenience function to model compute the true mean accuracy across all
-# 10 folds.
+# Convenience function to compute the true mean accuracy across all 10 folds.
 def true_accuracy(**config):
 	accuracy = 0.
 
@@ -74,8 +74,8 @@ opt = pysmac.SMAC_optimizer( working_directory = '/tmp/pysmac_test/',# the folde
 
 # The minimize method also has optional arguments
 value, parameters = opt.minimize(random_forest,
-					200, parameter_definition,
-					num_runs = 2,					# number of independent SMAC runs
+					10, parameter_definition,
+					num_runs = 1,					# number of independent SMAC runs
 					seed = 0,						# the random seed used. can be an int or a list of ints of length num_runs
 					num_procs = 2,					# pysmac can harness multicore architecture. Specify the number of processes to use here.
 					num_train_instances = len(kfold),# This tells SMAC how many different instances there are.
