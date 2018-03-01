@@ -1,0 +1,2 @@
+git+git://github.com/automl/ConfigSpace.git@v0.3.10#egg=ConfigSpace
+git+git://github.com/automl/SMAC3.git@v0.7.1#egg=SMAC3
