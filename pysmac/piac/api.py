@@ -1,4 +1,6 @@
+<<<<<<< HEAD
 import subprocess
+import shutil
 import pickle
 import os
 import glob
@@ -43,6 +45,10 @@ def run_ISMAC(source_dir, function_file, working_dir, python_executable='python3
             outputfile.write('algo-exec = %s %s' %(python_executable, function_file))
     
     scenario_file = working_dir + '/piac_scenario.txt'
+
+    #shutil.copyfile(source_dir+'/features.dat', working_dir+'/features.dat')
+
+
     
     
     if seed is None:
