@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import subprocess
 import shutil
 import pickle
@@ -16,7 +15,7 @@ def run_ISMAC(source_dir, function_file, working_dir, python_executable='python3
               init_rand_exploration_evaluations=20,
               init_default_evaluations=5,
               exploration_evaluations=20,
-              insts_for_PEI=-1,
+              insts_for_PEI=5,
               max_num_partitions=4,
               min_partition_size=4,
               tae_str='old', #  options 'aclib', 'old'
