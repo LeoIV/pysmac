@@ -97,5 +97,6 @@ def wrapper(function, parameter_definition):
     
     
     config_dict = parse_args(parser_dict)
+    print(config_dict)
     result = evaluate_function(function, config_dict, is_deterministic, has_instances)
     generate_output(result, config_dict.get('seed', 0))

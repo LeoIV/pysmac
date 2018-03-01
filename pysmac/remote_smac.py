@@ -152,7 +152,7 @@ class remote_smac(object):
 
         with open(additional_options_fn, 'r') as fh:
             for line in fh:
-                name, value = line.strip().split(' ')
+                name, value = line.strip().split('=')
                 cmds += ['--%s'%name, '%s'%value]
 
         self.__logger.debug("SMAC command: %s"%(' '.join(cmds)))

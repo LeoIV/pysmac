@@ -19,21 +19,21 @@ num_instances=16
 features = np.random.randint(9,size=(num_instances,3))
 
 # optimizer object
-opt = pysmac.SMAC_optimizer(t_limit_total_s=360, mem_limit_smac_mb= 300,
+opt = pysmac.SMAC_optimizer(t_limit_total_s=5, mem_limit_smac_mb= 300,
 							working_directory = path + '/pysmac_output',
 							persistent_files=True)
 
 
 # call its minimize method
 value, parameters = opt.minimize(a_function,  # the function to be minimized
-                                 100,         # the maximum number of function evaluations
+                                 50,         # the maximum number of function evaluations
                                  parameter_definition,
                                  num_train_instances = num_instances, 
                                  train_instance_features = features,
-                                 mem_limit_function_mb=150, 
+                                 mem_limit_function_mb=1200, 
                                  t_limit_function_s= 5,
                                  num_runs = 1)
 
-model = pysmac.piac.run_ISMAC("/tmp/pySMAC_run/pysmac_output", 'branin_cli.py', "/tmp/pySMAC_run/piac_output")
+model = pysmac.piac.run_ISMAC("/tmp/pySMAC_run/pysmac_output", './branin_cli.py', "/tmp/pySMAC_run/piac_output")
 
 config = model.get_config_for_instance(tuple(features[0]))

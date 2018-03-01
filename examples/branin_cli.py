@@ -1,9 +1,9 @@
 import math
-
 from pysmac.utils.smac_argparser import wrapper
 
 def branin(x1, x2, instance):
-	# note, this function doesn't actually use the instance id for anything!
+    # note, this function doesn't actually use the instance id for anything!
+    print('branin input: ', x1, x2, instance)
     a = 1
     b = 5.1 / (4*math.pi**2)
     c = 5 / math.pi
@@ -11,6 +11,7 @@ def branin(x1, x2, instance):
     s = 10
     t = 1 / (8*math.pi)
     ret  = a*(x2-b*x1**2+c*x1-r)**2+s*(1-t)*math.cos(x1)+s
+    print('branin output: ', ret)
     return ret
 
 
@@ -21,4 +22,4 @@ parameter_definition=dict(\
                 )
 
 if __name__=="__main__":
-	wrapper(branin, parameter_definition)
+    wrapper(branin, parameter_definition)
