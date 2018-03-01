@@ -2,6 +2,9 @@ import os,sys
 import math
 
 import numpy as np
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 import pysmac
 import pysmac.piac
@@ -26,7 +29,7 @@ opt = pysmac.SMAC_optimizer(t_limit_total_s=360, mem_limit_smac_mb= 300,
 
 # call its minimize method
 value, parameters = opt.minimize(a_function,  # the function to be minimized
-                                 100,         # the maximum number of function evaluations
+                                 10,         # the maximum number of function evaluations
                                  parameter_definition,
                                  num_train_instances = num_instances, 
                                  train_instance_features = features,
@@ -34,6 +37,6 @@ value, parameters = opt.minimize(a_function,  # the function to be minimized
                                  t_limit_function_s= 5,
                                  num_runs = 1)
 
-model = pysmac.piac.run_ISMAC("/tmp/pySMAC_run/pysmac_output", 'branin_cli.py', "/tmp/pySMAC_run/piac_output")
+model = pysmac.piac.run_ISMAC("/tmp/pySMAC_run/pysmac_output", './branin_cli.py', "/tmp/pySMAC_run/piac_output")
 
-config = model.get_config_for_instance(tuple(features[0]))
+#config = model.get_config_for_instance(tuple(features[0]))

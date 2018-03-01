@@ -292,9 +292,9 @@ class SMAC_optimizer(object):
         with open(scenario_fn,'w') as fh, open(additional_options_fn, 'w') as fg:
             for name, value in list(self.smac_options.items()):
                 if name in scenario_options:
-                    fh.write('%s %s\n'%(name, value))
+                    fh.write('%s = %s\n'%(name, value))
                 else:
-                    fg.write('%s %s\n'%(name,value))
+                    fg.write('%s = %s\n'%(name,value))
 
         # check that all files are actually present, so SMAC has everything to start
         assert all(map(os.path.exists, [additional_options_fn, scenario_fn, self.smac_options['pcs-file'], self.smac_options['instances']])), "Something went wrong creating files for SMAC! Try to specify a \'working_directory\' and set \'persistent_files=True\'."

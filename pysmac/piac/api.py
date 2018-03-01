@@ -4,14 +4,14 @@ Created on Mon Jul 24 14:05:22 2017
 
 @author: chris
 """
-import subprocess
+import shutil
 import pickle
 import os
 import glob
 import numpy as np
 from pysmac.utils import state_merge 
 
-from piac.piac_main import piac_main
+from kraken.piac.kraken import kraken
 
 def run_ISMAC(source_dir, function_file, working_dir, python_executable='python3',
               verbosity='ERROR', seed=None,
@@ -28,7 +28,7 @@ def run_ISMAC(source_dir, function_file, working_dir, python_executable='python3
               regularize=False,
               modus='SMAC', # other choice 'ROAR'
               only_use_known_configs=False,
-              budget='equal' # other choice 'inc' for increasing
+              budget_strat='equal' # other choice 'inc' for increasing
               ):
     state_run_directory = os.path.join(source_dir, 'out/scenario')
     merge_dir = os.path.join(working_dir, "scenario")
@@ -45,16 +45,20 @@ def run_ISMAC(source_dir, function_file, working_dir, python_executable='python3
                     outputfile.write(line)
                 if header == 'run-obj':
                     outputfile.write(" ".join([header, rest.lower()]))
-            outputfile.write('algo-exec-dir %s \n' %(working_dir))
-            outputfile.write('algo-exec %s %s' %(python_executable, function_file))
+            outputfile.write('algo-exec-dir = %s \n' %(working_dir))
+            outputfile.write('algo-exec = %s %s' %(python_executable, function_file))
     
     scenario_file = working_dir + '/piac_scenario.txt'
+
+    #shutil.copyfile(source_dir+'/features.dat', working_dir+'/features.dat')
+
+
     
     
     if seed is None:
         seed = np.random.seed()
     
-    model = piac_main(scen_file=scenario_file, per_partition_time=per_partition_time,
+    model = kraken(scen_file=scenario_file, per_partition_time=per_partition_time,
               working_dir=working_dir, verbosity=verbosity, seed=seed,
               exploration_time_budget=exploration_time_budget,
               init_rand_exploration_evaluations=init_rand_exploration_evaluations,
@@ -62,8 +66,7 @@ def run_ISMAC(source_dir, function_file, working_dir, python_executable='python3
               exploration_evaluations=exploration_evaluations, insts_for_PEI=insts_for_PEI,
               max_num_partitions=max_num_partitions, tae_str=tae_str, save_rounds=save_rounds,
               min_partition_size=min_partition_size, regularize=regularize, modus=modus,
-              only_known_configs=only_use_known_configs, budget=budget,
-              scenario_separator=' ')
+              only_known_configs=only_use_known_configs, budget_strat=budget_strat)
     return(model)
     
 
