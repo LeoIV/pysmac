@@ -10,6 +10,9 @@ import csv
 from glob import glob
 import pysmac.utils.state_merge as state_merge
 import pysmac.utils.smac_output_readers as output_reader
+import ConfigSpace as CS
+from ConfigSpace.util import fix_types
+
 
 import os
 path = os.path.dirname(os.path.realpath(__file__))
@@ -36,6 +39,7 @@ def smac_to_fanova(state_run_directory, destination_dir):
     destination_dir: str
                     path to the directory in which the merged states should be stored
     '''
+
     state_run_list =[]
     files = glob(state_run_directory + "/*")
     for file in files:
@@ -43,6 +47,7 @@ def smac_to_fanova(state_run_directory, destination_dir):
             state_run_list.append(file)
     state_merge.state_merge(state_run_list, destination_dir)
     merged_files = glob(destination_dir + '/*')
+
     for file in merged_files:
         if file.startswith(destination_dir + '/runs_and_results'):
             response_file = file
@@ -60,38 +65,26 @@ def smac_to_fanova(state_run_directory, destination_dir):
         if ':' in line:
             parameter = line.replace(':', '')
             f_params.append(parameter)
+    
+    # get configspace
+    with open(destination_dir + '/param.pcs') as fh:
+        cs = pcs_new.read(fh.readlines(), debug=True)
 
-    # getting features
-    all_nums = []
-    for dict_row in param_dict:
-        num_line = str(dict_row).replace("'", "")
-        num_line = str(num_line).replace("}", "")
-        nums = []
-        for line in str(num_line).split(" "):
-            line = str(line).replace(",", "")
-            if line.isdigit():
-                nums.append(np.int(line))
-            elif line.replace(".", "", 1).isdigit():
-                nums.append(np.float(line))
-            elif '-' in line:
-                new_line = line.replace("-","")
-                if new_line.isdigit():
-                    nums.append(np.int(line))
-                elif new_line.replace(".", "", 1).isdigit():
-                    nums.append(np.float(line))
-        all_nums.append(nums)
-
-    x = np.array(all_nums)
-    length = len(x)
-    Y = data_extractor(response_file, length)
-    fh = open(destination_dir + '/param.pcs')
-    orig_pcs = fh.readlines()
-    cs = pcs_new.read(orig_pcs, debug=True)
-    X = np.zeros((x.shape))
+    X = []
+    hps = cs.get_hyperparameters()
 
 
-    for i in range(x.shape[1]):
-        idx = cs.get_idx_by_hyperparameter_name(f_params[i])
-        X[:, idx] = x[:, i]   
-    # create an instance of fanova with data for the random forest and the configSpace
+    for p in param_dict:
+        c = CS.Configuration(cs, fix_types(p, cs), allow_inactive_with_values=True)
+        X.append([])
+        for hp in hps:
+            if hasattr(hp, 'choices'):
+                value = hp.choices.index(c[hp.name])
+            else:
+                value = c[hp.name]
+            X[-1].append(value)
+    
+    X = np.array(X)
+    Y = data_extractor(response_file, X.shape[0])
+
     return fanova.fANOVA(X = X, Y = Y, config_space= cs)
