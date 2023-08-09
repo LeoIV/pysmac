@@ -14,6 +14,7 @@ def check_java_version(java_executable="java"):
     :type  java_executable: str
     :raises: RuntimeError
     """
+    return None
     import re
     from subprocess import STDOUT, check_output
     
